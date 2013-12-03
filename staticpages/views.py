@@ -2,10 +2,10 @@ from django.conf import settings
 from staticpages.models import FatPage
 
 try:
-	from coffin.template import loader, RequestContext
+    from coffin.template import loader, RequestContext
 except ImportError:
-	print 'ImportError'
-	from django.template import loader, RequestContext
+    print 'ImportError'
+    from django.template import loader, RequestContext
 
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
@@ -15,9 +15,15 @@ from django.views.decorators.csrf import csrf_protect
 
 
 if hasattr(settings, 'FATPAGES_DEFAULT_TEMPLATE'):
-	DEFAULT_TEMPLATE = settings.FATPAGES_DEFAULT_TEMPLATE
+    DEFAULT_TEMPLATE = settings.FATPAGES_DEFAULT_TEMPLATE
 else:
-	DEFAULT_TEMPLATE = 'staticpages/default.html'
+    DEFAULT_TEMPLATE = 'staticpages/default.html'
+
+
+if hasattr(settings, 'FATPAGES_MOBILE_TEMPLATE'):
+    MOBILE_TEMPLATE = settings.FATPAGES_MOBILE_TEMPLATE
+else:
+    DEFAULT_TEMPLATE = 'staticpages/default.html'
 
 # This view is called from FatpageFallbackMiddleware.process_response
 # when a 404 is raised, which often means CsrfViewMiddleware.process_view
@@ -58,13 +64,19 @@ def render_fatpage(request, f):
     if f.template_name:
         t = loader.select_template((f.template_name, DEFAULT_TEMPLATE))
     else:
-        t = loader.get_template(DEFAULT_TEMPLATE)
+        #this is added for dealing with mobile pages
+        if 'IS_MOBILE' in request.META:
+            t = loader.get_template(DEFAULT_TEMPLATE)
+        else:
+            t = loader.get_template(MOBILE_TEMPLATE)
+
 
     # To avoid having to always use the "|safe" filter in fatpage templates,
     # mark the title and content as already safe (since they are raw HTML
     # content in the first place).
     f.title = mark_safe(f.title)
     f.content = mark_safe(f.content)
+    f.excerpt = mark_safe(f.excerpt)
 
     c = RequestContext(request, {
         'fatpage': f,
