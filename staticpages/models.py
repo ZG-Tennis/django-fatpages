@@ -114,4 +114,4 @@ class FatPage(models.Model):
             go_s3.close_connection()
 
 
-        super(FatPage, self).save(self, *args, **kwargs)
+        super(FatPage, self).save(*args, **kwargs)

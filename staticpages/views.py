@@ -66,9 +66,9 @@ def render_fatpage(request, f):
     else:
         #this is added for dealing with mobile pages
         if 'IS_MOBILE' in request.META:
-            t = loader.get_template(DEFAULT_TEMPLATE)
-        else:
             t = loader.get_template(MOBILE_TEMPLATE)
+        else:
+            t = loader.get_template(DEFAULT_TEMPLATE)
 
 
     # To avoid having to always use the "|safe" filter in fatpage templates,
