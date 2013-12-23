@@ -80,6 +80,7 @@ def render_fatpage(request, f):
 
     c = RequestContext(request, {
         'fatpage': f,
+        'page_handle': f.page_handle.page_handle,
     })
     response = HttpResponse(t.render(c))
     populate_xheaders(request, response, FatPage, f.id)

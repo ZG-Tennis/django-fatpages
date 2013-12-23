@@ -8,6 +8,7 @@ from ckeditor.fields import RichTextField
 from django.conf import settings
 from generics.s3utils import Go_S3
 from generics.analyze_html import Analyze_HTML
+from ad_center.models import Channels_Ads
 
 
 go_s3=Go_S3()
@@ -27,6 +28,9 @@ class FatPage(models.Model):
                                      help_text=_("Example: 'staticpages/contact_page.html'. If this isn't provided, the system will use 'the default."))
 
     registration_required = models.BooleanField(_('registration required'), help_text=_("If this is checked, only logged-in users will be able to view the page."))
+
+    page_handle = models.ForeignKey(Channels_Ads, blank=True, null=True,
+        related_name="fatpages_that_use_this_page_handle",)
 
     class Meta:
         db_table = 'django_flatpage'
